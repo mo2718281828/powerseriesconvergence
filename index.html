@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Series Convergence Review Game</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .options button, .next-button, .start-button {
+            padding: 10px;
+            border: none;
+            background: #007bff;
+            color: white;
+            font-size: 1em;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .options button:hover, .next-button:hover, .start-button:hover {
+            background: #0056b3;
+        }
+        .correct {
+            background: #28a745 !important;
+        }
+        .incorrect {
+            background: #dc3545 !important;
+        }
+        .score-message {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="start-screen">
+        <h2>Series Convergence Review Game</h2>
+        <p>Test your knowledge of series convergence and divergence by selecting the correct test!</p>
+        <p><strong>Challenge:</strong> Reach a score of 200 points or more.</p>
+        <button class="start-button" onclick="startGame()">Start Game</button>
+    </div>
+
+    <div class="container" id="game-screen" style="display: none;">
+        <h2>Series Convergence Review</h2>
+        <div class="score-message" id="score-message"></div>
+        <div class="score">Score: <span id="score">0</span></div>
+        <button class="next-button" id="next-button" style="display: none;" onclick="loadQuestion()">Next Question</button>
+        <div class="question" id="question">Loading question...</div>
+        <div class="options" id="options"></div>
+    </div>
+
+    <script>
+        let score = 0;
+
+        function startGame() {
+            document.getElementById("start-screen").style.display = "none";
+            document.getElementById("game-screen").style.display = "block";
+            loadQuestion();
+        }
+
+        const questions = [
+            { question: "\\sum_{n=1}^{\\infty} \\frac{(-1)^n}{n^2}", correct: "Converges by alternating series test", options: ["Converges by alternating series test", "Diverges by nth-term test", "Diverges by comparison test", "Converges by ratio test"] },
+            { question: "\\sum_{n=1}^{\\infty} \\frac{3^n}{n^3}", correct: "Diverges by ratio test", options: ["Diverges by ratio test", "Converges by integral test", "Diverges by root test", "Converges by nth-term test"] },
+            { question: "\\sum_{n=1}^{\\infty} \\frac{n^3}{e^n}", correct: "Converges by ratio test", options: ["Converges by ratio test", "Diverges by nth-term test", "Diverges by p-series test", "Converges by integral test"] },
+            { question: "\\sum_{n=1}^{\\infty} \\frac{1}{n^4 + 1}", correct: "Converges by limit comparison test", options: ["Converges by limit comparison test", "Diverges by nth-term test", "Diverges by root test", "Converges by ratio test"] },
+            { question: "\\sum_{n=1}^{\\infty} \\frac{(-1)^n n}{n+1}", correct: "Diverges by nth-term test", options: ["Diverges by nth-term test", "Converges by alternating series test", "Diverges by ratio test", "Converges by root test"] }
+        ];
+
+        function loadQuestion() {
+            document.getElementById("next-button").style.display = "none";
+            const q = questions[Math.floor(Math.random() * questions.length)];
+            document.getElementById("question").innerHTML = `\\[${q.question}\\]`;
+            document.getElementById("options").innerHTML = "";
+            document.getElementById("score-message").innerText = "";
+
+            q.options.sort(() => Math.random() - 0.5).forEach(option => {
+                const btn = document.createElement("button");
+                btn.innerHTML = option;
+                btn.onclick = () => checkAnswer(btn, option, q.correct);
+                document.getElementById("options").appendChild(btn);
+            });
+
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+        }
+
+        function checkAnswer(button, selected, correct) {
+            document.querySelectorAll(".options button").forEach(btn => {
+                btn.disabled = true;
+                if (btn.innerHTML === correct) btn.classList.add("correct");
+            });
+
+            if (selected === correct) {
+                score += 10;
+                document.getElementById("score-message").innerText = "Correct! +10";
+            } else {
+                score = Math.max(0, score - 5);
+                document.getElementById("score-message").innerText = "Incorrect. -5";
+                button.classList.add("incorrect");
+            }
+
+            document.getElementById("score").innerText = score;
+            document.getElementById("next-button").style.display = "block";
+        }
+    </script>
+</body>
+</html>

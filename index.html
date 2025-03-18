@@ -101,7 +101,7 @@
                 document.getElementById("options").appendChild(btn);
             });
 
-            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById("question")]);
         }
 
         function checkAnswer(button, selected, correct) {
